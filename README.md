@@ -1,2 +1,1 @@
-# code-reviewer
-AI Based Code reviewer
+Code Reviewer
