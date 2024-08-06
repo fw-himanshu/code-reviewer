@@ -1,9 +1,9 @@
 import { readFileSync } from "fs";
 import * as core from "@actions/core";
-import OpenAI from "openai";
 import { Octokit } from "@octokit/rest";
 import parseDiff, { Chunk, File } from "parse-diff";
 import minimatch from "minimatch";
+import axios from "axios";
 
 const GITHUB_TOKEN: string = core.getInput("GITHUB_TOKEN");
 const OPENAI_API_KEY: string = core.getInput("OPENAI_API_KEY");
@@ -12,12 +12,6 @@ const OPENAI_API_BASE: string = core.getInput("OPENAI_API_BASE");
 
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
-// const openai = new OpenAI({
-//   baseURL: OPENAI_API_BASE,
-//   apiKey: OPENAI_API_KEY,
-// });
-
-const openai = {} as OpenAI;
 
 interface PRDetails {
   owner: string;
@@ -119,31 +113,35 @@ async function getAIResponse(prompt: string): Promise<Array<{
   lineNumber: string;
   reviewComment: string;
 }> | null> {
-  const queryConfig = {
-    model: OPENAI_API_MODEL,
-    temperature: 0.2,
-    max_tokens: 700,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
+  let data = JSON.stringify({
+    "model": "Azure-GPT-4o-mini",
+    "messages": [
+      {
+        "role": "system",
+        "content": "generate the response in json format"
+      },
+      {
+        "content": prompt,
+        "role": "user"
+      }
+    ],
+    "temperature": 0,
+    "top_p": 1
+  });
+  
+  let config = {
+    method: 'post',
+    url: 'https://cloudverse.freshworkscorp.com/api/chat',
+    headers: { 
+      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7Im5hbWUiOiJIaW1hbnNodSBTaGFybWEiLCJlbWFpbCI6ImhpbWFuc2h1LnNoYXJtYUBmcmVzaHdvcmtzLmNvbSIsImltYWdlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jSWM5a3FpNFN3VlVncXMwdlRzYnRuQ2NhckxGOHZ3QTlUMDNpMFRjMzE4dTY2X1lHdz1zOTYtYyIsImlkIjoiNjZiMWU5NDhjZGIwYjEwMTI1YjZmOGE3In0sImV4cGlyZXMiOiIyMDI0LTA4LTA2VDEzOjE3OjE3LjU3NFoiLCJqdGkiOiI4YktaYWg2SF9iSVZiLXVrd0V4TDQiLCJpYXQiOjE3MjI5NDMwNDMsImV4cCI6MTcyMjk1MDI0M30.9kiuq8z5DJGNe_tOY4FXOftcm2-8JJZ1hGslpoPRzt8', 
+      'Content-Type': 'application/json'
+    },
+    data : data
   };
 
   try {
-    const response = await openai.chat.completions.create({
-      ...queryConfig,
-      // return JSON if the model supports it:
-      ...(OPENAI_API_MODEL === "gpt-4-1106-preview"
-        ? { response_format: { type: "json_object" } }
-        : {}),
-      messages: [
-        {
-          role: "system",
-          content: prompt,
-        },
-      ],
-    });
-
-    const res = response.choices[0].message?.content?.trim() || "{}";
+    const response = await axios(config);
+    const res = JSON.parse(response.data.replace("```json", '').replace('```', '')) || "{}";
     return JSON.parse(res).reviews;
   } catch (error) {
     console.error("Error:", error);
