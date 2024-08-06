@@ -17,6 +17,8 @@ const octokit = new Octokit({ auth: GITHUB_TOKEN });
 //   apiKey: OPENAI_API_KEY,
 // });
 
+const openai = {} as OpenAI;
+
 interface PRDetails {
   owner: string;
   repo: string;
