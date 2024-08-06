@@ -11,7 +11,7 @@ const OPENAI_API_MODEL: string = core.getInput("OPENAI_API_MODEL");
 const OPENAI_API_BASE: string = core.getInput("OPENAI_API_BASE");
 
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
-
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 interface PRDetails {
   owner: string;
