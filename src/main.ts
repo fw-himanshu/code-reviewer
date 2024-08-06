@@ -12,10 +12,10 @@ const OPENAI_API_BASE: string = core.getInput("OPENAI_API_BASE");
 
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
-const openai = new OpenAI({
-  baseURL: OPENAI_API_BASE,
-  apiKey: OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//   baseURL: OPENAI_API_BASE,
+//   apiKey: OPENAI_API_KEY,
+// });
 
 interface PRDetails {
   owner: string;
@@ -68,6 +68,7 @@ async function analyzeCode(
     if (file.to === "/dev/null") continue; // Ignore deleted files
     for (const chunk of file.chunks) {
       const prompt = createPrompt(file, chunk, prDetails);
+      console.log(prompt);
       const aiResponse = await getAIResponse(prompt);
       if (aiResponse) {
         const newComments = createComment(file, chunk, aiResponse);
