@@ -155,7 +155,7 @@ function getAIResponse(prompt) {
             method: 'post',
             url: 'https://cloudverse.freshworkscorp.com/api/chat',
             headers: {
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7Im5hbWUiOiJIaW1hbnNodSBTaGFybWEiLCJlbWFpbCI6ImhpbWFuc2h1LnNoYXJtYUBmcmVzaHdvcmtzLmNvbSIsImltYWdlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jSWM5a3FpNFN3VlVncXMwdlRzYnRuQ2NhckxGOHZ3QTlUMDNpMFRjMzE4dTY2X1lHdz1zOTYtYyIsImlkIjoiNjZiMWU5NDhjZGIwYjEwMTI1YjZmOGE3In0sImV4cGlyZXMiOiIyMDI0LTA4LTA2VDEzOjE3OjE3LjU3NFoiLCJqdGkiOiI4YktaYWg2SF9iSVZiLXVrd0V4TDQiLCJpYXQiOjE3MjI5NDMwNDMsImV4cCI6MTcyMjk1MDI0M30.9kiuq8z5DJGNe_tOY4FXOftcm2-8JJZ1hGslpoPRzt8',
+                'Authorization': '<removed>',
                 'Content-Type': 'application/json'
             },
             data: data
